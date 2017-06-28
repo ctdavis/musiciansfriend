@@ -1,0 +1,27 @@
+version: '2'
+
+services:
+  scrapy:
+    depends_on:
+      - mysql
+    build: .
+    container_name: scrapy
+    ports:
+      - "5000:5000"
+    links:
+      - mysql
+  mysql:
+    image: mysql
+    container_name: mysql-scrapy
+    command: --init-file /tmp/mysql-init.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_USER: musiciansfriend
+      MYSQL_PASSWORD: musiciansfriend
+      MYSQL_DATABASE: musiciansfriend
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./mysql-init.sql:/tmp/mysql-init.sql
+
+volumes:
+  db_data:
