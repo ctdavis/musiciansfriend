@@ -1,27 +1,38 @@
-version: '2'
+version: '3'
 
 services:
-  scrapy:
-    depends_on:
-      - mysql
+  scraper:
     build: .
-    container_name: scrapy
+    container_name: scraper
     ports:
       - "5000:5000"
-    links:
-      - mysql
-  mysql:
+    networks:
+      - scrapy_mysql_net
+    command: ["wait-for-it", "mysql:3306", "--timeout=240","--","scrapy", "crawl", "quotes"]
+  db:
     image: mysql
-    container_name: mysql-scrapy
-    command: --init-file /tmp/mysql-init.sql
+    container_name: db
+    command: ["--init-file=/tmp/mysql-init.sql", "--default-authentication-plugin=mysql_native_password"]
+    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: pass
-      MYSQL_USER: musiciansfriend
-      MYSQL_PASSWORD: musiciansfriend
-      MYSQL_DATABASE: musiciansfriend
+      MYSQL_NATIVE_PASSWORD: 'pass'
+      MYSQL_ROOT_PASSWORD: 'pass'
+      MYSQL_PASSWORD: 'pass'
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_HOST: '%'
+      MYSQL_USER: 'scraper'
     volumes:
-      - db_data:/var/lib/mysql
+      - ./db_dir:/var/lib/mysql
       - ./mysql-init.sql:/tmp/mysql-init.sql
+    networks:
+      - scrapy_mysql_net
+    ports:
+      - "3306:3306"
+    expose:
+      - 3306
 
 volumes:
-  db_data:
+  db_dir:
+
+networks:
+  scrapy_mysql_net:

@@ -1,3 +1,6 @@
-CREATE DATABASE IF NOT EXISTS musiciansfriend;
-USE musiciansfriend;
-CREATE TABLE IF NOT EXISTS musiciansfriend (id int AUTO_INCREMENT PRIMARY KEY, url text, name varchar(255), style varchar(255), brand varchar(255), price decimal(10,2), availability varchar(255));
+CREATE DATABASE IF NOT EXISTS quotes;
+USE quotes;
+CREATE TABLE IF NOT EXISTS quotes (id int AUTO_INCREMENT PRIMARY KEY, quote varchar(255), author varchar(255));
+CREATE USER 'scraper'@'%' IDENTIFIED BY 'pass';
+GRANT ALL PRIVILEGES ON *.* TO 'scraper'@'%';
+FLUSH PRIVILEGES;
